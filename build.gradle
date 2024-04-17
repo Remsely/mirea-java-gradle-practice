@@ -17,3 +17,33 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'edu.remsely.java_patterns.App'
+        )
+    }
+    from {
+        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+tasks.register('copyJar', Copy) {
+    from jar
+    rename { "${-> 'app.jar'}" }
+    into 'docker'
+}
+
+tasks.register('buildDockerImage', Exec) {
+    dependsOn copyJar
+    commandLine 'docker', 'build', '-t', 'app_image', './docker'
+}
+
+tasks.register('runDockerContainer', Exec) {
+    dependsOn buildDockerImage
+    commandLine 'docker', 'run', '--name', 'app_container', '-d', 'app_image'
+}
+
+buildDockerImage.mustRunAfter build
+runDockerContainer.mustRunAfter buildDockerImage

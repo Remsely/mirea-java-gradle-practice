@@ -1,7 +1,7 @@
-package edu.remsely.java-patterns;
+package edu.remsely.java_patterns;
 
-public class Main {
+public class App {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        System.out.println("Hello world from Docker container!");
     }
 }
